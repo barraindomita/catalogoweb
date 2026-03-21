@@ -124,7 +124,7 @@
 <!-- Banner de configuración -->
 <div class="config-banner" id="configBanner">
   ⚠️ <strong>Falta configurar la URL de tu planilla.</strong>
-  Abre este archivo HTML con un editor de texto y reemplaza <code>https://script.google.com/macros/s/AKfycbx889X3w-nIfXGeDWhe0MFSfrJmRXJt3KDR7of1KaVT9N76NPMzg2yUduHKSgYkPEZ_/exec</code> con la URL de tu Google Apps Script.
+  Abre este archivo HTML con un editor de texto y reemplaza <code>https://script.google.com/macros/s/AKfycbziTMvAgu_u680yykwtNHxXPuuLB2atkKgLzc5vDzM4OByb9Z0uBod1rWE8DAcogbQC/exec</code> con la URL de tu Google Apps Script.
   Sigue las instrucciones en el archivo <code>INSTRUCCIONES_SETUP.md</code>.
 </div>
 
@@ -171,7 +171,7 @@
 // ============================================================
 //  ↓↓↓  REEMPLAZA ESTA URL CON LA DE TU GOOGLE APPS SCRIPT  ↓↓↓
 // ============================================================
-const API_URL = 'https://script.google.com/macros/s/AKfycbx889X3w-nIfXGeDWhe0MFSfrJmRXJt3KDR7of1KaVT9N76NPMzg2yUduHKSgYkPEZ_/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbziTMvAgu_u680yykwtNHxXPuuLB2atkKgLzc5vDzM4OByb9Z0uBod1rWE8DAcogbQC/exec';
 // ============================================================
 
 const CATEGORIES = ['Todos','Whisky','Pisco','Vino','Vodka','Ron','Gin','Cerveza','Espumante','Tequila','Brandy','Promociones','Otros'];
@@ -179,7 +179,7 @@ let activeCategory = 'Todos';
 let allProducts = [];
 
 // Check config
-if (API_URL === 'https://script.google.com/macros/s/AKfycbx889X3w-nIfXGeDWhe0MFSfrJmRXJt3KDR7of1KaVT9N76NPMzg2yUduHKSgYkPEZ_/exec') {
+if (API_URL === 'https://script.google.com/macros/s/AKfycbziTMvAgu_u680yykwtNHxXPuuLB2atkKgLzc5vDzM4OByb9Z0uBod1rWE8DAcogbQC/exec') {
   document.getElementById('configBanner').classList.add('visible');
 }
 
@@ -255,7 +255,7 @@ function render() {
 }
 
 async function loadProducts() {
-  if (API_URL === 'https://script.google.com/macros/s/AKfycbx889X3w-nIfXGeDWhe0MFSfrJmRXJt3KDR7of1KaVT9N76NPMzg2yUduHKSgYkPEZ_/exec') {
+  if (API_URL === 'https://script.google.com/macros/s/AKfycbziTMvAgu_u680yykwtNHxXPuuLB2atkKgLzc5vDzM4OByb9Z0uBod1rWE8DAcogbQC/exec') {
     document.getElementById('grid').innerHTML = `
       <div class="error-state">
         <h3>URL no configurada</h3>
