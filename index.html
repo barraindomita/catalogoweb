@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Botillería</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --card: #1c1c1c;
+    --border: #2a2a2a;
+    --gold: #c9a84c;
+    --gold-dim: #8a6d30;
+    --text: #e8e8e4;
+    --muted: #888;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 24px 20px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-top { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+  .brand { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 700; color: var(--gold); letter-spacing: 0.04em; line-height: 1; }
+  .brand span { color: var(--text); font-weight: 400; font-size: 1rem; display: block; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 2px; }
+  .header-meta { text-align: right; }
+  .stat-num { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--gold); font-weight: 600; }
+  .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+  .updated-tag { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+
+  .controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .search-wrap { position: relative; flex: 1; min-width: 200px; }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+  input[type="search"] {
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    color: var(--text); padding: 10px 12px 10px 38px; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; transition: border-color 0.2s;
+  }
+  input[type="search"]:focus { border-color: var(--gold-dim); }
+  input[type="search"]::placeholder { color: var(--muted); }
+
+  .filter-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .filter-btn {
+    background: var(--card); border: 1px solid var(--border); color: var(--muted);
+    padding: 8px 14px; border-radius: 20px; font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; letter-spacing: 0.03em;
+  }
+  .filter-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+  .filter-btn.active { background: var(--gold); border-color: var(--gold); color: #0d0d0d; font-weight: 500; }
+
+  select {
+    background: var(--card); border: 1px solid var(--border); color: var(--text);
+    padding: 9px 12px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; outline: none; cursor: pointer;
+  }
+
+  main { padding: 24px; }
+  .result-info { font-size: 0.8rem; color: var(--muted); margin-bottom: 16px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px; display: flex; flex-direction: column; gap: 10px;
+    transition: border-color 0.2s, transform 0.15s; animation: fadeIn 0.3s ease both;
+  }
+  .card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .card-name { font-size: 0.88rem; font-weight: 500; line-height: 1.4; color: var(--text); flex: 1; }
+  .badge { font-size: 0.65rem; padding: 3px 8px; border-radius: 20px; font-weight: 500; white-space: nowrap; letter-spacing: 0.04em; text-transform: uppercase; flex-shrink: 0; }
+  .card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .price { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; color: var(--gold); }
+  .stock-tag { font-size: 0.72rem; color: var(--muted); }
+  .stock-tag.low { color: #c97b4c; }
+
+  /* Loading */
+  .loading-state { grid-column: 1/-1; text-align: center; padding: 80px 24px; }
+  .spinner { width: 36px; height: 36px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-state p { color: var(--muted); font-size: 0.9rem; }
+
+  /* Error */
+  .error-state { grid-column: 1/-1; text-align: center; padding: 60px 24px; }
+  .error-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: #c97b4c; margin-bottom: 8px; }
+  .error-state p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+  .error-state code { background: var(--card); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.8rem; }
+
+  .empty { grid-column: 1/-1; text-align: center; padding: 80px 24px; color: var(--muted); }
+  .empty h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 8px; color: var(--text); }
+
+  .badge-whisky { background: #3d2a0a; color: #e8b66a; }
+  .badge-pisco { background: #2a1a0d; color: #d4916b; }
+  .badge-vino { background: #2a0d1a; color: #d46b9b; }
+  .badge-vodka { background: #0d1a2a; color: #6ba0d4; }
+  .badge-ron { background: #0d2a1a; color: #6bd49b; }
+  .badge-gin { background: #1a2a0d; color: #a0d46b; }
+  .badge-cerveza { background: #2a200d; color: #d4c06b; }
+  .badge-espumante { background: #1a0d2a; color: #b06bd4; }
+  .badge-tequila { background: #2a0d0d; color: #d46b6b; }
+  .badge-brandy { background: #1a1a0d; color: #b4b46b; }
+  .badge-promo { background: #0d2a2a; color: #6bd4d4; }
+  .badge-otros { background: #1a1a1a; color: #888; }
+
+  footer { text-align: center; padding: 32px; color: var(--muted); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 24px; }
+
+  /* Config banner — solo visible si la URL no está configurada */
+  .config-banner {
+    background: #1a1200; border: 1px solid #4a3200; color: #e8b66a;
+    padding: 14px 20px; font-size: 0.82rem; line-height: 1.6;
+    display: none;
+  }
+  .config-banner.visible { display: block; }
+  .config-banner code { background: #2a1e00; padding: 2px 6px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- Banner de configuración -->
+<div class="config-banner" id="configBanner">
+  ⚠️ <strong>Falta configurar la URL de tu planilla.</strong>
+  Abre este archivo HTML con un editor de texto y reemplaza <code>https://script.google.com/macros/s/AKfycbx889X3w-nIfXGeDWhe0MFSfrJmRXJt3KDR7of1KaVT9N76NPMzg2yUduHKSgYkPEZ_/exec</code> con la URL de tu Google Apps Script.
+  Sigue las instrucciones en el archivo <code>INSTRUCCIONES_SETUP.md</code>.
+</div>
+
+<header>
+  <div class="header-top">
+    <div class="brand">
+      Catálogo
+      <span>Botillería</span>
+    </div>
+    <div class="header-meta">
+      <div class="stat-num" id="countDisplay">—</div>
+      <div class="stat-label">Productos</div>
+      <div class="updated-tag" id="updatedTag"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="search-wrap">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="search" id="searchInput" placeholder="Buscar producto..." oninput="render()">
+    </div>
+    <select id="sortSelect" onchange="render()">
+      <option value="nombre">Nombre A–Z</option>
+      <option value="precio-asc">Precio ↑</option>
+      <option value="precio-desc">Precio ↓</option>
+      <option value="stock">Mayor stock</option>
+    </select>
+  </div>
+  <div class="filter-btns" id="filterBtns"></div>
+</header>
+
+<main>
+  <div class="result-info" id="resultInfo"></div>
+  <div class="grid" id="grid">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando catálogo...</p>
+    </div>
+  </div>
+</main>
+
+<footer>Precios y stock actualizados en tiempo real desde la planilla &nbsp;·&nbsp; Solo productos disponibles</footer>
+
+<script>
+// ============================================================
+//  ↓↓↓  REEMPLAZA ESTA URL CON LA DE TU GOOGLE APPS SCRIPT  ↓↓↓
+// ============================================================
+const API_URL = 'https://script.google.com/macros/s/AKfycbx889X3w-nIfXGeDWhe0MFSfrJmRXJt3KDR7of1KaVT9N76NPMzg2yUduHKSgYkPEZ_/exec';
+// ============================================================
+
+const CATEGORIES = ['Todos','Whisky','Pisco','Vino','Vodka','Ron','Gin','Cerveza','Espumante','Tequila','Brandy','Promociones','Otros'];
+let activeCategory = 'Todos';
+let allProducts = [];
+
+// Check config
+if (API_URL === 'https://script.google.com/macros/s/AKfycbx889X3w-nIfXGeDWhe0MFSfrJmRXJt3KDR7of1KaVT9N76NPMzg2yUduHKSgYkPEZ_/exec') {
+  document.getElementById('configBanner').classList.add('visible');
+}
+
+// Build filter buttons
+const filterBtns = document.getElementById('filterBtns');
+CATEGORIES.forEach(cat => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn' + (cat === 'Todos' ? ' active' : '');
+  btn.textContent = cat;
+  btn.onclick = () => {
+    activeCategory = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  };
+  filterBtns.appendChild(btn);
+});
+
+function badgeClass(cat) {
+  const map = { Whisky:'badge-whisky', Pisco:'badge-pisco', Vino:'badge-vino', Vodka:'badge-vodka', Ron:'badge-ron', Gin:'badge-gin', Cerveza:'badge-cerveza', Espumante:'badge-espumante', Tequila:'badge-tequila', Brandy:'badge-brandy', Promociones:'badge-promo' };
+  return map[cat] || 'badge-otros';
+}
+
+function fmtPrice(p) {
+  return '$' + Number(p).toLocaleString('es-CL');
+}
+
+function render() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const sort = document.getElementById('sortSelect').value;
+
+  let items = allProducts.filter(p => {
+    const catMatch = activeCategory === 'Todos' || p.categoria === activeCategory;
+    const qMatch = !q || p.nombre.toLowerCase().includes(q);
+    return catMatch && qMatch;
+  });
+
+  items.sort((a, b) => {
+    if (sort === 'nombre') return a.nombre.localeCompare(b.nombre);
+    if (sort === 'precio-asc') return a.precio - b.precio;
+    if (sort === 'precio-desc') return b.precio - a.precio;
+    if (sort === 'stock') return b.stock - a.stock;
+    return 0;
+  });
+
+  document.getElementById('countDisplay').textContent = items.length;
+  document.getElementById('resultInfo').textContent =
+    items.length === allProducts.length
+      ? `Mostrando ${items.length} productos`
+      : `${items.length} de ${allProducts.length} productos`;
+
+  const grid = document.getElementById('grid');
+
+  if (items.length === 0) {
+    grid.innerHTML = `<div class="empty"><h3>Sin resultados</h3><p>No hay productos que coincidan con tu búsqueda.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map((p, i) => `
+    <div class="card" style="animation-delay:${Math.min(i,30)*0.02}s">
+      <div class="card-top">
+        <div class="card-name">${p.nombre}</div>
+        <span class="badge ${badgeClass(p.categoria)}">${p.categoria}</span>
+      </div>
+      <div class="card-bottom">
+        <div class="price">${fmtPrice(p.precio)}</div>
+        <div class="stock-tag ${p.stock <= 3 ? 'low' : ''}">
+          ${p.stock <= 3 ? '⚠ ' : ''}Stock: ${p.stock}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function loadProducts() {
+  if (API_URL === 'https://script.google.com/macros/s/AKfycbx889X3w-nIfXGeDWhe0MFSfrJmRXJt3KDR7of1KaVT9N76NPMzg2yUduHKSgYkPEZ_/exec') {
+    document.getElementById('grid').innerHTML = `
+      <div class="error-state">
+        <h3>URL no configurada</h3>
+        <p>Sigue las instrucciones en <code>INSTRUCCIONES_SETUP.md</code><br>para conectar el catálogo con tu Google Sheets.</p>
+      </div>`;
+    return;
+  }
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    allProducts = data.products || [];
+
+    if (data.updated) {
+      document.getElementById('updatedTag').textContent = 'Actualizado: ' + data.updated;
+    }
+
+    render();
+  } catch (err) {
+    document.getElementById('grid').innerHTML = `
+      <div class="error-state">
+        <h3>Error al cargar</h3>
+        <p>No se pudo conectar con la planilla.<br>
+        Verifica que la URL del script sea correcta y que esté publicado como "Cualquier usuario".<br><br>
+        <code>${err.message}</code></p>
+      </div>`;
+  }
+}
+
+loadProducts();
+</script>
+</body>
+</html>
