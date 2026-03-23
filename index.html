@@ -197,6 +197,7 @@
   .badge-tequila { background: #2a0d0d; color: #d46b6b; }
   .badge-brandy { background: #1a1a0d; color: #b4b46b; }
   .badge-promo { background: #0d2a2a; color: #6bd4d4; }
+  .badge-zero { background: #0d1a0d; color: #6bd46b; }
   .badge-otros { background: #1a1a1a; color: #888; }
 
   footer { text-align: center; padding: 28px; color: var(--muted); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 24px; }
@@ -287,7 +288,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbziTMvAgu_u680yykwtNHxX
 const WHATSAPP_NUMBER = '56927956551';
 // ============================================================
 
-const CATEGORIES = ['Todos','Whisky','Pisco','Vino','Vodka','Ron','Gin','Cerveza','Espumante','Tequila','Brandy','Promociones','Otros'];
+const CATEGORIES = ['Todos','Whisky','Pisco','Vino','Vodka','Ron','Gin','Cerveza','Espumante','Tequila','Brandy','Barra Zero','Promociones','Otros'];
 let activeCategory = 'Todos';
 let allProducts = [];
 let cart = {}; // { nombre: { producto, qty } }
@@ -308,7 +309,7 @@ CATEGORIES.forEach(cat => {
 });
 
 function badgeClass(cat) {
-  const map = { Whisky:'badge-whisky', Pisco:'badge-pisco', Vino:'badge-vino', Vodka:'badge-vodka', Ron:'badge-ron', Gin:'badge-gin', Cerveza:'badge-cerveza', Espumante:'badge-espumante', Tequila:'badge-tequila', Brandy:'badge-brandy', Promociones:'badge-promo' };
+  const map = { Whisky:'badge-whisky', Pisco:'badge-pisco', Vino:'badge-vino', Vodka:'badge-vodka', Ron:'badge-ron', Gin:'badge-gin', Cerveza:'badge-cerveza', Espumante:'badge-espumante', Tequila:'badge-tequila', Brandy:'badge-brandy', Promociones:'badge-promo', 'Barra Zero':'badge-zero' };
   return map[cat] || 'badge-otros';
 }
 
