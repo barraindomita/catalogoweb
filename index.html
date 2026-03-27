@@ -219,6 +219,8 @@
   .badge-promo { background: #0d2a2a; color: #6bd4d4; }
   .badge-zero { background: #0d1a0d; color: #6bd46b; }
   .badge-otros { background: #1a1a1a; color: #888; }
+  .badge-cigarros { background: #2a1a0a; color: #d4956b; }
+  .badge-snacks { background: #1a2a0a; color: #b8d46b; }
 
   footer { text-align: center; padding: 28px; color: var(--muted); font-size: 0.75rem; border-top: 1px solid var(--border); margin-top: 24px; }
 
@@ -946,7 +948,45 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbziTMvAgu_u680yykwtNHxX
 const WHATSAPP_NUMBER = '56927956551';
 // ============================================================
 
-const CATEGORIES = ['Todos','Whisky','Pisco','Vino','Vodka','Ron','Gin','Cerveza','Espumante','Tequila','Brandy','Barra Zero','Promociones','Otros'];
+const CIGARROS_CODIGOS = new Set([
+  '5059362828871','5059362828895','5059362828864','5059362828901',
+  '30087859','30068926',
+  '7804660290190','78026803','7804660290237','78026773',
+  '7804660290251','7804660290244','78026704',
+  '5908249932371','78026780','78032637','78026605','78026797','78026766',
+  '5902047176968','5908249936256',
+  '4030700161547',
+  '5908249942912','5908249946880','5908249946897',
+  '7730104033972','7730104034023','7730104033965','7730104033651',
+  '7809225235821',
+  '78025288','78031265','78019324','78025295','78024878',
+  '78018846','78024717','78018853','78028074','78028067',
+  '78022010','78019065','78016293','78019041','78029071','78012523',
+  '78030442','78025219','78026438','78026414',
+  '78028043','78025035','78033450','78026384',
+  '7804612131274','7804612131557',
+  '78025059','8412765508905'
+]);
+const SNACKS_CODIGOS = new Set([
+  '7802420008641','7802420008658','7802000021589','7801235004367',
+  '7802420009518','7804612221807','7802420009198','7804630011336',
+  '7622201776459','7622210427076','7622202015212','7702133815782',
+  '7802200105881','7802215113567',
+  '78011748','78068308','78005624','78068315','78007505',
+  '7622210427199','78024106','78023994',
+  '7613034279743','7802200133426','7802200132696',
+  '7802000013614','7802000013607','7802000013621',
+  '7804650390374','7804654940728','7804654940155',
+  '7802420003813','7802215512384','7802215512421',
+  '7891118014019','78921511','7802220021635','7622210824721',
+  '2000074097140','JO15032026','7804663400046','2000074096914',
+  '8445291716841','7613287755810','7802215101335',
+  '7899970402807','7899970403026','7899970402982',
+  '7802230975324','7804673910030','7802000019548',
+  '7790310984901','7891962064048',
+  '7622202044311','7622210835543','7622210835550','7802200852105'
+]);
+const CATEGORIES = ['Todos','Whisky','Pisco','Vino','Vodka','Ron','Gin','Cerveza','Espumante','Tequila','Brandy','Barra Zero','Promociones','Cigarros y más','Snacks','Otros'];
 let activeCategory = 'Todos';
 let allProducts = [];
 let cart = {}; // { nombre: { producto, qty } }
@@ -967,7 +1007,7 @@ CATEGORIES.forEach(cat => {
 });
 
 function badgeClass(cat) {
-  const map = { Whisky:'badge-whisky', Pisco:'badge-pisco', Vino:'badge-vino', Vodka:'badge-vodka', Ron:'badge-ron', Gin:'badge-gin', Cerveza:'badge-cerveza', Espumante:'badge-espumante', Tequila:'badge-tequila', Brandy:'badge-brandy', Promociones:'badge-promo', 'Barra Zero':'badge-zero' };
+  const map = { Whisky:'badge-whisky', Pisco:'badge-pisco', Vino:'badge-vino', Vodka:'badge-vodka', Ron:'badge-ron', Gin:'badge-gin', Cerveza:'badge-cerveza', Espumante:'badge-espumante', Tequila:'badge-tequila', Brandy:'badge-brandy', Promociones:'badge-promo', 'Barra Zero':'badge-zero', 'Cigarros y más':'badge-cigarros', 'Snacks':'badge-snacks' };
   return map[cat] || 'badge-otros';
 }
 
@@ -1038,7 +1078,9 @@ function render() {
   const sort = document.getElementById('sortSelect').value;
 
   let items = allProducts.filter(p => {
-    const catMatch = activeCategory === 'Todos' || p.categoria === activeCategory;
+    const _cod = String(p.codigo);
+    const catEfectiva = CIGARROS_CODIGOS.has(_cod) ? 'Cigarros y más' : SNACKS_CODIGOS.has(_cod) ? 'Snacks' : p.categoria;
+    const catMatch = activeCategory === 'Todos' || catEfectiva === activeCategory;
     const qMatch = !q || p.nombre.toLowerCase().includes(q);
     return catMatch && qMatch;
   });
@@ -1107,7 +1149,7 @@ function render() {
         <div class="card-body">
           <div class="card-top">
             <div class="card-name">${p.nombre}</div>
-            <span class="badge ${badgeClass(p.categoria)}">${p.categoria}</span>
+            <span class="badge ${badgeClass(CIGARROS_CODIGOS.has(String(p.codigo)) ? 'Cigarros y más' : SNACKS_CODIGOS.has(String(p.codigo)) ? 'Snacks' : p.categoria)}">${CIGARROS_CODIGOS.has(String(p.codigo)) ? 'Cigarros y más' : SNACKS_CODIGOS.has(String(p.codigo)) ? 'Snacks' : p.categoria}</span>
           </div>
           <div class="card-bottom">
             <div class="price">${fmtPrice(p.precio)}</div>
