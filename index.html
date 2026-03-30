@@ -254,8 +254,26 @@
   .social-btn-wa { background: #25d366; }
   .social-btn-rappi { background: #ff441f; }
 
-  /* Reducción de imágenes de producto en móvil (-30%) */
+  /* Ajustes móvil */
   @media (max-width: 768px) {
+    /* Contador en línea con el logo */
+    .header-top {
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+    .brand img {
+      height: 44px;
+    }
+    .stat-num {
+      font-size: 1.1rem;
+    }
+    .stat-label {
+      font-size: 0.62rem;
+    }
+    .updated-tag {
+      font-size: 0.6rem;
+    }
+    /* Reducción de imágenes de producto (-30%) */
     .card-img,
     .card-img-placeholder {
       width: 70%;
@@ -972,7 +990,8 @@ const FOTO_MAP = {
   '7804673910870': 'https://drive.google.com/thumbnail?id=1SRF4MPf0xdgJufb1Ad6XEQ3aDfnkyqmh&sz=w400',
   '7804673910023': 'https://drive.google.com/thumbnail?id=1nZVbBPM3cdtuJd2Fn8ehCMWWD-zqUoSH&sz=w400',
   '7804673910184': 'https://drive.google.com/thumbnail?id=123FvJ_IIpuHlFlVFrmac004eekcaWull&sz=w400',
-  '7802000020735': 'https://drive.google.com/thumbnail?id=1jW19IzhSDPwRDgM-csLNeDgRpgtkRh6F&sz=w400'
+  '7802000020735': 'https://drive.google.com/thumbnail?id=1jW19IzhSDPwRDgM-csLNeDgRpgtkRh6F&sz=w400',
+  '658325695502': 'https://drive.google.com/thumbnail?id=1CsCEqo_RlwZ8mD4V2YcsJR3D0_kp81LW&sz=w400'
 };
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbziTMvAgu_u680yykwtNHxXPuuLB2atkKgLzc5vDzM4OByb9Z0uBod1rWE8DAcogbQC/exec';
